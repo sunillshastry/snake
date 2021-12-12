@@ -8,9 +8,9 @@ import java.util.Random;
 import javax.swing.Timer;
 
 public class WindowPanel extends JPanel implements ActionListener{
-    private static final int FRAME_WIDTH = 1300;
+    private static final int FRAME_WIDTH = 1200;
 
-    private static final int FRAME_HEIGHT = 750;
+    private static final int FRAME_HEIGHT = 700;
 
     private static final int UNIT_SIZE = 50;
 
@@ -18,9 +18,9 @@ public class WindowPanel extends JPanel implements ActionListener{
 
     private static final int TIMER_DELAY = 175;
 
-    private final int X_CORDS[] = new int[WindowPanel.GAME_UNITS];
+    private final int[] X_CORDS = new int[WindowPanel.GAME_UNITS];
 
-    private final int Y_CORDS[] = new int[WindowPanel.GAME_UNITS];
+    private final int[] Y_CORDS = new int[WindowPanel.GAME_UNITS];
 
     private int bodyParts = 6;
 
@@ -36,20 +36,19 @@ public class WindowPanel extends JPanel implements ActionListener{
 
     private Timer timer;
 
-    private Random random;
+    private final Random random;
 
     public WindowPanel(){
         this.random = new Random();
         this.setPreferredSize(new Dimension(WindowPanel.FRAME_WIDTH, WindowPanel.FRAME_HEIGHT));
-        this.setBackground(Color.black);
+        this.setBackground(new Color(220, 224, 204));
         this.setFocusable(true);
-        this.addKeyListener(new MyKeyAdapter());
-
-        this.startGame();
+        this.addKeyListener(new CustomKeyAdapter());
+        this.beginGame();
     }
 
-    public void startGame() {
-        this.newApple();
+    public void beginGame() {
+        this.newEnergyBlock();
         this.isMoving = true;
 
         this.timer = new Timer(WindowPanel.TIMER_DELAY,this);
@@ -63,23 +62,23 @@ public class WindowPanel extends JPanel implements ActionListener{
 
     public void draw(Graphics graphics) {
         if(this.isMoving) {
-            graphics.setColor(Color.red);
+            graphics.setColor(new Color(120, 29, 66));
             graphics.fillOval(this.energyX, this.energyY, WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
 
             for(int i = 0; i < this.bodyParts; i++) {
                 if(i == 0) {
-                    graphics.setColor(Color.green);
+                    graphics.setColor(new Color(236, 179, 101));
                     graphics.fillRect(this.X_CORDS[i], this.Y_CORDS[i], WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
                 }
                 else {
-                    graphics.setColor(new Color(45,180,0));
+                    graphics.setColor(new Color(240,210,144));
                     graphics.fillRect(this.X_CORDS[i], this.Y_CORDS[i], WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
                 }
             }
-            graphics.setColor(Color.red);
-            graphics.setFont( new Font("Ink Free",Font.BOLD, 40));
+            graphics.setColor(new Color(163, 66, 60));
+            graphics.setFont( new Font("Roboto Mono", Font.BOLD, 30));
             FontMetrics metrics = getFontMetrics(graphics.getFont());
-            graphics.drawString("Score: "
+            graphics.drawString("SCORE: "
                     + this.energyEaten,
                     (WindowPanel.FRAME_WIDTH - metrics.stringWidth("Score: " + this.energyEaten)) / 2,
                     graphics.getFont().getSize());
@@ -90,7 +89,7 @@ public class WindowPanel extends JPanel implements ActionListener{
 
     }
 
-    public void newApple(){
+    public void newEnergyBlock(){
         this.energyX = random.nextInt((int)(WindowPanel.FRAME_WIDTH / UNIT_SIZE)) * UNIT_SIZE;
         this.energyY = random.nextInt((int)(WindowPanel.FRAME_HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
     }
@@ -118,11 +117,11 @@ public class WindowPanel extends JPanel implements ActionListener{
     }
 
 
-    public void checkApple() {
+    public void checkEnergy() {
         if((this.X_CORDS[0] == this.energyX) && (this.Y_CORDS[0] == this.energyY)) {
             this.bodyParts++;
             this.energyEaten++;
-            this.newApple();
+            this.newEnergyBlock();
         }
     }
 
@@ -156,8 +155,8 @@ public class WindowPanel extends JPanel implements ActionListener{
 
     public void gameOver(Graphics graphics) {
         //Score
-        graphics.setColor(Color.red);
-        graphics.setFont( new Font("Ink Free",Font.BOLD, 40));
+        graphics.setColor(new Color(163, 66, 60));
+        graphics.setFont(new Font("Roboto Mono", Font.BOLD, 30));
         FontMetrics metrics1 = getFontMetrics(graphics.getFont());
         graphics.drawString("Score: "
                 + this.energyEaten,
@@ -165,8 +164,8 @@ public class WindowPanel extends JPanel implements ActionListener{
                 graphics.getFont().getSize());
 
         //Game Over text
-        graphics.setColor(Color.red);
-        graphics.setFont( new Font("Ink Free",Font.BOLD, 75));
+        graphics.setColor(new Color(163, 66, 60));
+        graphics.setFont( new Font("Roboto Mono",Font.BOLD, 75));
         FontMetrics metrics2 = getFontMetrics(graphics.getFont());
         graphics.drawString("Game Over",
                 (WindowPanel.FRAME_WIDTH - metrics2.stringWidth("Game Over")) / 2,
@@ -177,13 +176,13 @@ public class WindowPanel extends JPanel implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         if(this.isMoving) {
             this.move();
-            this.checkApple();
+            this.checkEnergy();
             this.checkCollisions();
         }
         repaint();
     }
 
-    public class MyKeyAdapter extends KeyAdapter{
+    public class CustomKeyAdapter extends KeyAdapter{
         @Override
         public void keyPressed(KeyEvent event) {
             switch(event.getKeyCode()) {
