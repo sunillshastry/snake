@@ -50,7 +50,6 @@ _If you wish to enquire about the project or to simply get in touch with Sunil, 
 
 [Instagram](https://www.instagram.com/sunillshastry/)
 
-To view full documentation for Rhythm, visit [Rhythm Documentation](https://rhythmapp.netlify.app/)
 
 **Thank you for visiting my GitHub repository, have a great day!**
 
