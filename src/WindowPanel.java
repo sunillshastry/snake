@@ -5,7 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Random;
-import java.util.Timer;
+import javax.swing.Timer;
 
 public class WindowPanel extends JPanel implements ActionListener {
     private final static int FRAME_WIDTH = 600;
@@ -16,7 +16,7 @@ public class WindowPanel extends JPanel implements ActionListener {
 
     public static final int GAME_UNITS = (WindowPanel.FRAME_WIDTH * WindowPanel.FRAME_HEIGHT) / WindowPanel.UNIT_SIZE;
 
-    public static final int DELAY = 75;
+    public static final int TIMER_DELAY = 75;
 
     private final int[] X_COORD = new int[WindowPanel.GAME_UNITS];
 
@@ -46,7 +46,12 @@ public class WindowPanel extends JPanel implements ActionListener {
         this.addKeyListener(new CustomKeyAdapter());
     }
 
-    public void startGame() {}
+    public void startGame() {
+        this.newEnergy();
+        this.running = true;
+        this.gameTimer = new Timer(WindowPanel.TIMER_DELAY, this);
+        this.gameTimer.start();
+    }
 
     public void paintComponent(Graphics g) {}
 
