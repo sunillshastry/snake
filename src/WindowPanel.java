@@ -67,6 +67,16 @@ public class WindowPanel extends JPanel implements ActionListener {
         }
         graphics.setColor(Color.CYAN);
         graphics.fillOval(this.energyX, this.energyY, WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
+
+        for(int i = 0; i < WindowPanel.bodyParts; i++) {
+            if(i == 0) {
+                graphics.setColor(Color.GREEN);
+                graphics.fillRect(this.X_COORD[i], this.Y_COORD[i], WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
+            } else {
+                graphics.setColor(Color.orange);
+                graphics.fillRect(this.X_COORD[i], this.Y_COORD[i], WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
+            }
+        }
     }
 
     public void newEnergy() {
