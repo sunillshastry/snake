@@ -22,7 +22,7 @@ public class WindowPanel extends JPanel implements ActionListener {
 
     private final int[] Y_COORD = new int[WindowPanel.GAME_UNITS];
 
-    public int bodyParts = 6;
+    public static int bodyParts = 6;
 
     public int energyConsumed;
 
@@ -76,7 +76,26 @@ public class WindowPanel extends JPanel implements ActionListener {
         this.energyY = this.random.nextInt(energyRangeY);
     }
 
-    public void move() {}
+    public void move() {
+        for(int i = WindowPanel.bodyParts; i > 0; i++) {
+            this.X_COORD[i] = this.X_COORD[i - 1];
+            this.Y_COORD[i] = this.Y_COORD[i - 1];
+        }
+        switch(this.direction) {
+            case 'U':
+                this.Y_COORD[0] = this.Y_COORD[0] - WindowPanel.UNIT_SIZE;
+                break;
+            case 'D':
+                this.Y_COORD[0] = this.Y_COORD[0] + WindowPanel.UNIT_SIZE;
+                break;
+            case 'L':
+                this.X_COORD[0] = this.X_COORD[0] - WindowPanel.UNIT_SIZE;
+                break;
+            case 'R':
+                this.X_COORD[0] = this.X_COORD[0] + WindowPanel.UNIT_SIZE;
+                break;
+        }
+    }
 
     public void checkEnergy() {}
 
