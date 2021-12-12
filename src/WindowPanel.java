@@ -65,9 +65,16 @@ public class WindowPanel extends JPanel implements ActionListener {
             graphics.drawLine(cord, 0, cord, WindowPanel.FRAME_HEIGHT);
             graphics.drawLine(0, cord, WindowPanel.FRAME_WIDTH, cord);
         }
+        graphics.setColor(Color.CYAN);
+        graphics.fillOval(this.energyX, this.energyY, WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
     }
 
-    public void newEnergy() {}
+    public void newEnergy() {
+        int energyRangeX = ((int) (WindowPanel.FRAME_WIDTH / WindowPanel.UNIT_SIZE)) * WindowPanel.UNIT_SIZE ;
+        int energyRangeY = ((int) (WindowPanel.FRAME_HEIGHT / WindowPanel.UNIT_SIZE)) * WindowPanel.UNIT_SIZE;
+        this.energyX = this.random.nextInt(energyRangeX);
+        this.energyY = this.random.nextInt(energyRangeY);
+    }
 
     public void move() {}
 
