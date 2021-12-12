@@ -52,6 +52,8 @@ public class WindowPanel extends JPanel implements ActionListener {
 
     public void draw(Graphics g) {}
 
+    public void newEnergy() {}
+
     public void move() {}
 
     public void checkEnergy() {}
