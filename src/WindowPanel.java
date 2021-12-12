@@ -7,50 +7,53 @@ import java.awt.event.KeyEvent;
 import java.util.Random;
 import javax.swing.Timer;
 
-public class WindowPanel extends JPanel implements ActionListener {
-    private final static int FRAME_WIDTH = 600;
+public class WindowPanel extends JPanel implements ActionListener{
+    private static final int FRAME_WIDTH = 1300;
 
-    private final static int FRAME_HEIGHT = 600;
+    private static final int FRAME_HEIGHT = 750;
 
-    public static final int UNIT_SIZE = 25;
+    private static final int UNIT_SIZE = 50;
 
-    public static final int GAME_UNITS = (WindowPanel.FRAME_WIDTH * WindowPanel.FRAME_HEIGHT) / WindowPanel.UNIT_SIZE;
+    private static final int GAME_UNITS = (FRAME_WIDTH * FRAME_HEIGHT) / (UNIT_SIZE * UNIT_SIZE);
 
-    public static final int TIMER_DELAY = 75;
+    private static final int TIMER_DELAY = 175;
 
-    private final int[] X_COORD = new int[WindowPanel.GAME_UNITS];
+    private final int X_CORDS[] = new int[WindowPanel.GAME_UNITS];
 
-    private final int[] Y_COORD = new int[WindowPanel.GAME_UNITS];
+    private final int Y_CORDS[] = new int[WindowPanel.GAME_UNITS];
 
-    public static int bodyParts = 6;
+    private int bodyParts = 6;
 
-    public int energyConsumed;
+    private int energyEaten;
 
-    public int energyX;
+    private int energyX;
 
-    public int energyY;
+    private int energyY;
 
-    public char direction = 'R';
+    private char direction = 'R';
 
-    public boolean running = false;
+    private boolean isMoving = false;
 
-    public Timer gameTimer;
+    private Timer timer;
 
-    public Random random;
+    private Random random;
 
-    public WindowPanel() {
+    public WindowPanel(){
         this.random = new Random();
         this.setPreferredSize(new Dimension(WindowPanel.FRAME_WIDTH, WindowPanel.FRAME_HEIGHT));
-        this.setBackground(Color.BLACK);
+        this.setBackground(Color.black);
         this.setFocusable(true);
-        this.addKeyListener(new CustomKeyAdapter());
+        this.addKeyListener(new MyKeyAdapter());
+
+        this.startGame();
     }
 
     public void startGame() {
-        this.newEnergy();
-        this.running = true;
-        this.gameTimer = new Timer(WindowPanel.TIMER_DELAY, this);
-        this.gameTimer.start();
+        this.newApple();
+        this.isMoving = true;
+
+        this.timer = new Timer(WindowPanel.TIMER_DELAY,this);
+        this.timer.start();
     }
 
     public void paintComponent(Graphics graphics) {
@@ -59,65 +62,156 @@ public class WindowPanel extends JPanel implements ActionListener {
     }
 
     public void draw(Graphics graphics) {
-        final int MAX = WindowPanel.FRAME_HEIGHT / WindowPanel.UNIT_SIZE;
-        for(int i = 0; i < MAX; i++) {
-            int cord = i * WindowPanel.UNIT_SIZE;
-            graphics.drawLine(cord, 0, cord, WindowPanel.FRAME_HEIGHT);
-            graphics.drawLine(0, cord, WindowPanel.FRAME_WIDTH, cord);
-        }
-        graphics.setColor(Color.CYAN);
-        graphics.fillOval(this.energyX, this.energyY, WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
+        if(this.isMoving) {
+            graphics.setColor(Color.red);
+            graphics.fillOval(this.energyX, this.energyY, WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
 
-        for(int i = 0; i < WindowPanel.bodyParts; i++) {
-            if(i == 0) {
-                graphics.setColor(Color.GREEN);
-                graphics.fillRect(this.X_COORD[i], this.Y_COORD[i], WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
-            } else {
-                graphics.setColor(Color.orange);
-                graphics.fillRect(this.X_COORD[i], this.Y_COORD[i], WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
+            for(int i = 0; i < this.bodyParts; i++) {
+                if(i == 0) {
+                    graphics.setColor(Color.green);
+                    graphics.fillRect(this.X_CORDS[i], this.Y_CORDS[i], WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
+                }
+                else {
+                    graphics.setColor(new Color(45,180,0));
+                    graphics.fillRect(this.X_CORDS[i], this.Y_CORDS[i], WindowPanel.UNIT_SIZE, WindowPanel.UNIT_SIZE);
+                }
             }
+            graphics.setColor(Color.red);
+            graphics.setFont( new Font("Ink Free",Font.BOLD, 40));
+            FontMetrics metrics = getFontMetrics(graphics.getFont());
+            graphics.drawString("Score: "
+                    + this.energyEaten,
+                    (WindowPanel.FRAME_WIDTH - metrics.stringWidth("Score: " + this.energyEaten)) / 2,
+                    graphics.getFont().getSize());
         }
+        else {
+            this.gameOver(graphics);
+        }
+
     }
 
-    public void newEnergy() {
-        int energyRangeX = ((int) (WindowPanel.FRAME_WIDTH / WindowPanel.UNIT_SIZE)) * WindowPanel.UNIT_SIZE ;
-        int energyRangeY = ((int) (WindowPanel.FRAME_HEIGHT / WindowPanel.UNIT_SIZE)) * WindowPanel.UNIT_SIZE;
-        this.energyX = this.random.nextInt(energyRangeX);
-        this.energyY = this.random.nextInt(energyRangeY);
+    public void newApple(){
+        this.energyX = random.nextInt((int)(WindowPanel.FRAME_WIDTH / UNIT_SIZE)) * UNIT_SIZE;
+        this.energyY = random.nextInt((int)(WindowPanel.FRAME_HEIGHT / UNIT_SIZE)) * UNIT_SIZE;
     }
 
-    public void move() {
-        for(int i = WindowPanel.bodyParts; i > 0; i++) {
-            this.X_COORD[i] = this.X_COORD[i - 1];
-            this.Y_COORD[i] = this.Y_COORD[i - 1];
+    public void move(){
+        for(int i = this.bodyParts; i > 0; i--) {
+            this.X_CORDS[i] = this.X_CORDS[i - 1];
+            this.Y_CORDS[i] = this.Y_CORDS[i - 1];
         }
+
         switch(this.direction) {
             case 'U':
-                this.Y_COORD[0] = this.Y_COORD[0] - WindowPanel.UNIT_SIZE;
+                this.Y_CORDS[0] = this.Y_CORDS[0] - WindowPanel.UNIT_SIZE;
                 break;
             case 'D':
-                this.Y_COORD[0] = this.Y_COORD[0] + WindowPanel.UNIT_SIZE;
+                this.Y_CORDS[0] = this.Y_CORDS[0] + WindowPanel.UNIT_SIZE;
                 break;
             case 'L':
-                this.X_COORD[0] = this.X_COORD[0] - WindowPanel.UNIT_SIZE;
+                this.X_CORDS[0] = this.X_CORDS[0] - WindowPanel.UNIT_SIZE;
                 break;
             case 'R':
-                this.X_COORD[0] = this.X_COORD[0] + WindowPanel.UNIT_SIZE;
+                this.X_CORDS[0] = this.X_CORDS[0] + WindowPanel.UNIT_SIZE;
                 break;
         }
     }
 
-    public void checkEnergy() {}
 
-    public void checkCollision() {}
+    public void checkApple() {
+        if((this.X_CORDS[0] == this.energyX) && (this.Y_CORDS[0] == this.energyY)) {
+            this.bodyParts++;
+            this.energyEaten++;
+            this.newApple();
+        }
+    }
 
-    public void gameOver(Graphics graphics) {}
+    public void checkCollisions() {
+        for(int i = this.bodyParts; i > 0; i--) {
+            if((this.X_CORDS[0] == this.X_CORDS[i]) && (this.Y_CORDS[0] == this.Y_CORDS[i])) {
+                this.isMoving = false;
+            }
+        }
+        //check if head touches left border
+        if(this.X_CORDS[0] < 0) {
+            this.isMoving = false;
+        }
+        //check if head touches right border
+        if(this.X_CORDS[0] > WindowPanel.FRAME_WIDTH) {
+            this.isMoving = false;
+        }
+        //check if head touches top border
+        if(this.Y_CORDS[0] < 0) {
+            this.isMoving = false;
+        }
+        //check if head touches bottom border
+        if(this.Y_CORDS[0] > WindowPanel.FRAME_HEIGHT) {
+            this.isMoving = false;
+        }
+
+        if(!this.isMoving) {
+            this.timer.stop();
+        }
+    }
+
+    public void gameOver(Graphics graphics) {
+        //Score
+        graphics.setColor(Color.red);
+        graphics.setFont( new Font("Ink Free",Font.BOLD, 40));
+        FontMetrics metrics1 = getFontMetrics(graphics.getFont());
+        graphics.drawString("Score: "
+                + this.energyEaten,
+                (WindowPanel.FRAME_WIDTH - metrics1.stringWidth("Score: "+ this.energyEaten)) / 2,
+                graphics.getFont().getSize());
+
+        //Game Over text
+        graphics.setColor(Color.red);
+        graphics.setFont( new Font("Ink Free",Font.BOLD, 75));
+        FontMetrics metrics2 = getFontMetrics(graphics.getFont());
+        graphics.drawString("Game Over",
+                (WindowPanel.FRAME_WIDTH - metrics2.stringWidth("Game Over")) / 2,
+                WindowPanel.FRAME_HEIGHT / 2);
+    }
 
     @Override
-    public void actionPerformed(ActionEvent event) {}
+    public void actionPerformed(ActionEvent e) {
+        if(this.isMoving) {
+            this.move();
+            this.checkApple();
+            this.checkCollisions();
+        }
+        repaint();
+    }
 
-    public class CustomKeyAdapter extends KeyAdapter {
+    public class MyKeyAdapter extends KeyAdapter{
         @Override
-        public void keyPressed(KeyEvent event) {}
+        public void keyPressed(KeyEvent event) {
+            switch(event.getKeyCode()) {
+                case KeyEvent.VK_LEFT:
+                case KeyEvent.VK_A:
+                    if(direction != 'R') {
+                        direction = 'L';
+                    }
+                    break;
+                case KeyEvent.VK_RIGHT:
+                case KeyEvent.VK_D:
+                    if(direction != 'L') {
+                        direction = 'R';
+                    }
+                    break;
+                case KeyEvent.VK_UP:
+                case KeyEvent.VK_W:
+                    if(direction != 'D') {
+                        direction = 'U';
+                    }
+                    break;
+                case KeyEvent.VK_DOWN:
+                case KeyEvent.VK_S:
+                    if(direction != 'U') {
+                        direction = 'D';
+                    }
+                    break;
+            }
+        }
     }
 }
