@@ -53,12 +53,19 @@ public class WindowPanel extends JPanel implements ActionListener {
         this.gameTimer.start();
     }
 
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        this.draw(g);
+    public void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        this.draw(graphics);
     }
 
-    public void draw(Graphics g) {}
+    public void draw(Graphics graphics) {
+        final int MAX = WindowPanel.FRAME_HEIGHT / WindowPanel.UNIT_SIZE;
+        for(int i = 0; i < MAX; i++) {
+            int cord = i * WindowPanel.UNIT_SIZE;
+            graphics.drawLine(cord, 0, cord, WindowPanel.FRAME_HEIGHT);
+            graphics.drawLine(0, cord, WindowPanel.FRAME_WIDTH, cord);
+        }
+    }
 
     public void newEnergy() {}
 
@@ -68,7 +75,7 @@ public class WindowPanel extends JPanel implements ActionListener {
 
     public void checkCollision() {}
 
-    public void gameOver(Graphics g) {}
+    public void gameOver(Graphics graphics) {}
 
     @Override
     public void actionPerformed(ActionEvent event) {}
