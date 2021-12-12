@@ -53,7 +53,10 @@ public class WindowPanel extends JPanel implements ActionListener {
         this.gameTimer.start();
     }
 
-    public void paintComponent(Graphics g) {}
+    public void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        this.draw(g);
+    }
 
     public void draw(Graphics g) {}
 
