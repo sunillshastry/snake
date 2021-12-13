@@ -3,8 +3,10 @@ import javax.swing.JFrame;
 /**
  * The Java JFrame consisting of the game, a window that imitates the JFrame class.
  */
-public class WindowFrame extends JFrame{
-    /** The title of the window, i.e the main title for the game */
+public class WindowFrame extends JFrame {
+    /**
+     * The title of the window, i.e the main title for the game
+     */
     private static final String FRAME_TITLE = "Snake";
 
     /**
